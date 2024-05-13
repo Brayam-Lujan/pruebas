@@ -1,118 +1,125 @@
-# API de Supermercado
+# API para tenis
+La api posee endpints que ayudan a administrar los productos, en este caso los llamados "Tenis", Clientes y Ventas.
 
-## Descripción
-Esta API proporciona endpoints para administrar productos, clientes y ventas de un supermercado.
+## Base de datos 
 
-# Ejecución del Proyecto
+Se utiliza una base de datos (En este caso MySQL donde esta la dependencia importada aunque se puede cambiar a tu preferencia), Configurar y asegurar las crecenciales en el archivo `application.properties`.
 
-A continuación se detallan los pasos necesarios para ejecutar el proyecto localmente:
+Ejemplo donde sustituir la informacion en los espacios vacios:
 
-## 1. Clonar el Repositorio desde GitHub
+### Propiedades
 
-Clone el repositorio desde GitHub a su máquina local utilizando el siguiente comando:
+- spring.datasource.url=jdbc:________:mem:testdb
+- spring.datasource.driverClassName=org._____________.Driver
+- spring.datasource.username=usuario
+- spring.datasource.password=contraseña
+- spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 
-## 2. Configurar la Base de Datos
+# Modelos (Cliente, Teni, Venta)
 
-El proyecto utiliza una base de datos para almacenar la información. Asegúrese de tener una base de datos disponible y configure las credenciales de conexión en el archivo `application.properties`.
+## Atributos Cliente
 
-Ejemplo de configuración para una base de datos H2 en memoria:
+- `Long` (`id`)
+- Identificador unico llamado id
+- `String` (`nombre`)
+- Nombre del cliente
+- `String` (`apellido`)
+- apellidos del cliente 
+- `String` (`direccion`)
+- direccion/hubicación del cliente
+- `String` (`correo`)
+- correo del cliente
+- `String`(`numero`)
+- numero del cliente 
+- `String` (`infoPago`)
+- Informacion del metodo de pago (tarjeta,efectivo, etc)
 
-```properties
-spring.datasource.url=jdbc:h2:mem:testdb
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=password
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-```
+## Atributos Teni
 
-# Modelos
+- `Long` (`id`)
+-  Identificador unico id
+- `String` (`marca`)
+- marca del ten
+- `String` (`modelo`)
+- modelo del ten 
+- `double` (`precioCompra`)
+- precio de compra del ten
+- `Integer` (`precioVenta`)
+- precio de venta del ten 
+- `Boolean`(`Stock`)
+- cantidad de tenis 
+- `String` (`color`)
+- Color de los tenis
+- `String` (`descripcion`):
+- brebe texto que decrive las caracteristicas del el ten
 
-## Cliente (`Client`)
+## Atributos Venta:
 
-### Atributos:
-- `clientId` (`Long`): Identificador único del cliente.
-- `names` (`String`): Nombres del cliente.
-- `email` (`String`): Correo electrónico del cliente.
-- `phone` (`String`): Número de teléfono del cliente.
-- `address` (`String`): Dirección del cliente.
-- `password` (`String`): Contraseña del cliente.
-- `id_card` (`Long`): Número de identificación del cliente.
-
-## Producto (`Product`)
-
-### Atributos:
-- `id` (`Long`): Identificador único del producto.
-- `codigo` (`String`): Código único del producto.
-- `precio` (`Integer`): Precio del producto.
-- `nombre` (`String`): Nombre del producto.
-- `categoria` (`String`): Categoría del producto.
-- `peso` (`String`): Peso del producto.
-- `marca` (`String`): Marca del producto.
-- `descripcion` (`String`): Descripción del producto.
-- `imagen` (`String`): URL de la imagen del producto.
-
-## Venta (`Sale`)
-
-### Atributos:
-- `id` (`Long`): Identificador único de la venta.
-- `clientId` (`Client`): Cliente asociado a la venta.
-- `products` (Lista de `Product`): Productos vendidos.
-- `total` (`BigDecimal`): Total de la venta.
-- `purchaseDate` (`LocalDateTime`): Fecha y hora de la compra.
+- `id` (`Long`)
+- Identificador único de la venta.
+- `clientId` (`Client`)
+- Cliente asociado a la venta.
+- `Teni` (Lista de `tenis`)
+- tenis vendidos.
+- `total` (`BigDecimal`)
+- Total de la venta.
+- `purchaseDate` (`LocalDateTime`)
+- Fecha y hora de la compra.
 
 # Controladores
 
-## Controlador Base (`BaseController`)
+## Base (`BaseController`)
+El controlador base sirve para para definir una ruta para las relaciones en la apu atravez de la ruta:
+- `/api/ventatenis`
 
-Este es el controlador base que define la ruta base para todos los controladores relacionados con la tienda de comestibles.
+## Clientes (`ClientController`)
+Es el controlador que maneja las operaciones de cliente y su ruta es:
+- `/Clientes`
 
-- Ruta base: `/api/grocerystore`
+## Métodos:
 
-## Controlador de Clientes (`ClientController`)
+- **GET /clientes**
+- Obtiene todos los clientes.
+- **GET /clientes/{Id}**
+- Obtiene un cliente por su ID.
+- **POST /clientes**
+- Crea un nuevo cliente.
+- **PUT /clientes/{Id}**
+- Actualiza un cliente existente por su ID.
+- **DELETE /clientes/{Id}**
+- Elimina un cliente por su ID.
 
-Este controlador maneja las operaciones relacionadas con los clientes.
+## Productos (`TeniCOntroller`)
 
-- Ruta base: `/clients`
+Es el controlador que maneja las operaciones de Teni y su ruta es:
+- `/tenis`
+
+## Métodos:
+
+- **GET /tenis**
+- Obtiene todos los productos o filtra por código si se proporciona.
+- **GET /tenis/{id}**
+- Obtiene un producto por su ID.
+- **POST /tenis**
+- Crea un nuevo producto.
+- **PUT /tenis/{id}**
+- Actualiza un producto existente por su ID.
+- **DELETE /tenis/{id}**
+- Elimina un producto por su ID.
+
+## Ventas (`VentaController`)
+Es el controlador que maneja las operaciones de Venta y su ruta es:
+- `/ventas`
 
 ### Métodos:
-
-- **GET /clients**: Obtiene todos los clientes.
-- **GET /clients/{clientId}**: Obtiene un cliente por su ID.
-- **POST /clients**: Crea un nuevo cliente.
-- **PUT /clients/{clientId}**: Actualiza un cliente existente por su ID.
-- **DELETE /clients/{clientId}**: Elimina un cliente por su ID.
-
-## Controlador de Productos (`ProductController`)
-
-Este controlador maneja las operaciones relacionadas con los productos.
-
-- Ruta base: `/products`
-
-### Métodos:
-
-- **GET /products**: Obtiene todos los productos o filtra por código si se proporciona.
-- **GET /products/{id}**: Obtiene un producto por su ID.
-- **POST /products**: Crea un nuevo producto.
-- **PUT /products/{id}**: Actualiza un producto existente por su ID.
-- **DELETE /products/{id}**: Elimina un producto por su ID.
-
-## Controlador de Ventas (`SaleController`)
-
-Este controlador maneja las operaciones relacionadas con las ventas.
-
-- Ruta base: `/sales`
-
-### Métodos:
-
-- **POST /sales**: Crea una nueva venta.
-- **GET /sales/{id}**: Obtiene una venta por su ID.
-- **GET /sales**: Obtiene todas las ventas.
-- **PUT /sales/{id}**: Actualiza una venta existente por su ID.
-- **DELETE /sales/{id}**: Elimina una venta por su ID.
-
----
-
-Este es el final de la documentación de la API de la tienda de comestibles. Si necesitas más información o tienes alguna pregunta, no dudes en ponerte en contacto conmigo.
-
-¡Gracias por utilizar mi API!
+- **POST /venta**
+- Crea una nueva venta.
+- **GET /venta/{id}**
+- Obtiene una venta por su ID.
+- **GET /venta**
+- Obtiene todas las ventas.
+- **PUT /venta/{id}**
+- Actualiza una venta existente por su ID.
+- **DELETE /venta/{id}**
+- Elimina una venta por su ID.
 
