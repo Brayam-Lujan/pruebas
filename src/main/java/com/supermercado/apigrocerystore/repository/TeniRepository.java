@@ -7,5 +7,5 @@ import com.supermercado.apigrocerystore.model.Teni;
 import java.util.List;
 
 public interface TeniRepository extends JpaRepository<Teni, Long>{
-    List<Teni> findByCodigo(String numSerie);
+    List<Teni> findByNumSerie(String numSerie);
 }
