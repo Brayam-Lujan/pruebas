@@ -9,10 +9,13 @@ import com.supermercado.apigrocerystore.model.Teni;
 import com.supermercado.apigrocerystore.repository.TeniRepository;
 
 @Service
-public class TeniServiceImpl implements TeniService{
-    
+public class TeniServiceImpl implements TeniService {
+    private final TeniRepository teniRepository;
+
     @Autowired
-    private TeniRepository teniRepository;
+    public TeniServiceImpl(TeniRepository teniRepository) {
+        this.teniRepository = teniRepository;
+    }
 
     @Override
     public List<Teni> getAll() {
@@ -26,8 +29,8 @@ public class TeniServiceImpl implements TeniService{
     }
 
     @Override
-    public List<Teni> getByCodigo(String numSerie){
-        return teniRepository.findByCodigo(numSerie);
+    public List<Teni> getByNumSerie (String numSerie){
+        return teniRepository.findByNumSerie(numSerie);
     }
 
     @Override

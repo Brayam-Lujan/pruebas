@@ -28,7 +28,7 @@ public class TeniController {
     @GetMapping
     public List<Teni> buscarTeni(@RequestParam(required = false) String numSerie){
         if (numSerie != null && !numSerie.isEmpty()) {
-            return teniService.getByCodigo(numSerie);
+            return teniService.getByNumSerie(numSerie);
         }else{
             return teniService.getAll();
         }

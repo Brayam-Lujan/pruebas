@@ -8,7 +8,7 @@ public interface TeniService {
     
     List<Teni> getAll();
     Teni getById(Long teniId);
-    List<Teni> getByCodigo(String numSerie);
+    List<Teni> getByNumSerie(String numSerie);
     Teni addProduct(Teni teni);
     Teni updateProduct(Long teniId, Teni newTeni);
     void deleteProduct(Long teniId);
