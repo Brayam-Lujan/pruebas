@@ -10,9 +10,9 @@ import com.supermercado.apigrocerystore.repository.TeniRepository;
 
 @Service
 public class TeniServiceImpl implements TeniService {
+    @Autowired
     private final TeniRepository teniRepository;
 
-    @Autowired
     public TeniServiceImpl(TeniRepository teniRepository) {
         this.teniRepository = teniRepository;
     }
