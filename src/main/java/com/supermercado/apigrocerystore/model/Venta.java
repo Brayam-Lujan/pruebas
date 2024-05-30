@@ -34,4 +34,9 @@ public class Venta {
     @Column(nullable = false)
     private LocalDateTime purchaseDate;
 
+    public void setId(long l) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setId'");
+    }
+
 }

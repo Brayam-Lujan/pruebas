@@ -13,14 +13,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.supermercado.apigrocerystore.model.Cliente;
 import com.supermercado.apigrocerystore.service.ClienteService;
 
 
 @RestController
 @RequestMapping("/apiTenis/clientes")
-public class ClienteController {
+public class ClienteController extends ApiBaseController{
     
     @Autowired
     private ClienteService clienteService;

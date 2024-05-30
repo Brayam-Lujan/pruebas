@@ -20,7 +20,7 @@ import com.supermercado.apigrocerystore.service.TeniService;
 
 @RestController
 @RequestMapping("/apiTenis/tenis")
-public class TeniController {
+public class TeniController extends ApiBaseController{
     
     @Autowired
     private TeniService teniService;

@@ -19,7 +19,7 @@ import com.supermercado.apigrocerystore.service.VentaService;
 
 @RestController
 @RequestMapping("/apiTenis/ventas")
-public class VentaController {
+public class VentaController extends ApiBaseController{
     
     @Autowired
     private VentaService ventaService;
