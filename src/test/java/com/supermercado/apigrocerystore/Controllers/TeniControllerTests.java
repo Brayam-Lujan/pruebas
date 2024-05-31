@@ -1,111 +1,127 @@
 package com.supermercado.apigrocerystore.Controllers;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.Collections;
-import java.util.Optional;
+import java.util.Arrays;
+import java.util.List;
+
+import com.supermercado.apigrocerystore.controller.TeniController;
+import com.supermercado.apigrocerystore.model.Teni;
+import com.supermercado.apigrocerystore.service.TeniService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import org.junit.jupiter.api.extension.ExtendWith;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.supermercado.apigrocerystore.controller.TeniController;
-import com.supermercado.apigrocerystore.model.Cliente;
-import com.supermercado.apigrocerystore.model.Teni;
-import com.supermercado.apigrocerystore.repository.TeniRepository;
-import com.supermercado.apigrocerystore.service.TeniService;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
+@ExtendWith(MockitoExtension.class)
 @WebMvcTest(TeniController.class)
 public class TeniControllerTests {
-    
+
+    @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private WebApplicationContext webApplicationContext; 
-    @Autowired
-    private TeniRepository teniRepository ;
+
     @MockBean
     private TeniService teniService;
 
+    @InjectMocks
+    private TeniController teniController;
+
+    private Teni teni1;
+    private Teni teni2;
+    private List<Teni> teniList;
+
     @BeforeEach
-    public void setUp(){
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    public void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(teniController).build();
+
+        teni1 = new Teni(1L, "1234", "Adidas", "Sport", 125000, 150000, 42, "azul", "Comodos");
+        teni2 = new Teni(2L, "12345", "Nike", "Air", 150000, 200000, 32, "Verde", "algo simples");
+        teniList = Arrays.asList(teni1, teni2);
     }
 
     @Test
-    public void testBuscarTeni() throws Exception{
-        when(teniRepository.findAll()).thenReturn(Collections.emptyList());
+    public void testGetAllProducts() throws Exception {
+        when(teniService.getAll()).thenReturn(teniList);
 
-        mockMvc.perform(get("/ApiTenis/tenis"))
-            .andExpect(status().isOk())
-            .andExpect(content().json("[]"));
-
-        verify(teniRepository, times(1)).findAll();
-    }
-
-    @Test
-    public void obtenerTeniPorIdTest() throws Exception{
-        Teni teni = new Teni();
-        teni.setTeniId(1L);
-        when(teniRepository.findById(1L)).thenReturn(Optional.of(teni));
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/ApiTenis/tenis/1"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.clienteId").value(1));
-
-            verify(teniRepository, times(1)).findById(1L);
-    }
-
-    @Test
-    public void testCrearCliente() throws Exception{
-        Teni teni = new Teni();
-        teni.setTeniId(1L);
-        when(teniRepository.save(any(Teni.class))).thenReturn(teni);
-        mockMvc.perform(post("/ApiTenis/tenis")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content("{\"teniId\": null, \"numSerie\": null, \"marca\": null, \"modelo\": null, \"precioCompra\": null, \"precioVenta\": null, \"stock\": null, \"color\": null, \"descripcion\"}")
-        .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.clienteId").value(1));
-        verify(teniRepository, times(1).save(any(Teni.class)));
-    }
-
-    @Test
-    public void testActualizarTeni() throws Exception {
-        Teni teni = new Teni();
-        teni.setTeniId(1L);
-        when(teniService.updateProduct(any(Long.class), any(Teni.class))).thenReturn(teni);
-        mockMvc.perform(MockMvcRequestBuilders.put("/apicarsales/tenis/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"clienteId\": null, \"nombre\": null, \"apellido\": null, \"direccion\": null, \"correo\": null, \"numero\": null, \"info_pago\"}"))
+        mockMvc.perform(get("/apigrocerystore/products"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.clientId").value(1));
-        verify(teniService, times(1)).updateProduct(any(Long.class), any(Teni.class));
+                .andExpect(jsonPath("$[0].id").value(teni1.getTeniId()))
+                .andExpect(jsonPath("$[1].id").value(teni2.getTeniId()));
     }
 
     @Test
-    public void testEliminarTeni() throws Exception {
-        doNothing().when(teniService).deleteProduct(1L);
-        mockMvc.perform(MockMvcRequestBuilders.delete("/apicarsales/tenis/1"))
-                .andExpect(status().isNoContent());
-        verify(teniService, times(1)).deleteProduct(1L);
+    public void testGetProductById_Success() throws Exception {
+        when(teniService.getById(anyLong())).thenReturn(teni1);
+
+        mockMvc.perform(get("/apiTenis/tenis/{teniId}", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(teni1.getTeniId()));
     }
 
+    @Test
+    public void testGetProductById_NotFound() throws Exception {
+        when(teniService.getById(anyLong())).thenReturn(null);
+        mockMvc.perform(get("/apiTenis/tenis/{teniId}", 1L))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testCreateProduct() throws Exception {
+        when(teniService.addProduct(any(Teni.class))).thenReturn(teni1);
+
+        mockMvc.perform(post("/apiTenis/tenis")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(teni1)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(teni1.getTeniId()));
+    }
+
+    @Test
+    public void testUpdateProductById_Success() throws Exception {
+        when(teniService.updateProduct(anyLong(), any(Teni.class))).thenReturn(teni1);
+
+        mockMvc.perform(put("/apiTenis/tenis/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(teni1)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(teni1.getTeniId()));
+    }
+
+    @Test
+    public void testUpdateProductById_NotFound() throws Exception {
+        when(teniService.updateProduct(anyLong(), any(Teni.class))).thenReturn(null);
+
+        mockMvc.perform(put("/apiTenis/tenis/{teniId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(teni1)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testDeleteProductById() throws Exception {
+        mockMvc.perform(delete("/apiTenis/tenis/{teniId}", 1L))
+                .andExpect(status().isNoContent());
+    }
+
+    private static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
